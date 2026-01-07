@@ -243,6 +243,7 @@
 | ✅ | ags | sumatra             | Sumatra: Fate of Yandi                                                       | tag2015 |
 | ✅ | ags | superegoch0         | Superego - Chapter 0                                                         | DavidAriyan, tag2015 |
 | ✅ | ags | superegoch12        | Superego - Chapter 1+2                                                       | tag2015 |
+| ✅ | ags | takes2tangle        | It Takes Two To Tangle                                                       | GandalfTheWhite80 |
 | ✅ | ags | tales               | Tales                                                                        | tag2015 |
 | ✅ | ags | teafortwo           | Tea For Two: A Detective Logan Case                                          | DavidAriyan |
 | ✅ | ags | technobabylon       | Technobabylon                                                                | DavidAriyan |
