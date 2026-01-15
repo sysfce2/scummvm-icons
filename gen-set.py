@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# pylint: disable=docstring-first-line-empty
+# pylint: disable=docstring-first-line-empty,invalid-name
 # we shouldn't change this default header
 
 """
@@ -26,7 +26,7 @@
  "
 """
 
-# pylint: enable=docstring-first-line-empty
+# pylint: enable=docstring-first-line-empty,invalid-name
 
 import argparse
 import csv
@@ -40,7 +40,7 @@ import xml.etree.ElementTree as ElemTree
 from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
-from typing import Tuple, final, Set, AnyStr, List
+from typing import Final, List, Optional, Set, Tuple
 from zipfile import ZipFile
 
 
@@ -52,39 +52,39 @@ class GUID:
     element_name: str
 
 
-GUIDS: final(Set[GUID]) = {GUID(filename_root='games', gid='1775285192', element_name='game'),
+GUIDS: Final[Set[GUID]] = {GUID(filename_root='games', gid='1775285192', element_name='game'),
                            GUID(filename_root='engines', gid='0', element_name='engine'),
                            GUID(filename_root='companies', gid='226191984', element_name='company'),
                            GUID(filename_root='series', gid='1095671818', element_name='serie')
                            }
 
-MIN_PYTHON: final(Tuple[int]) = (3, 8)  # min python version is 3.8
+MIN_PYTHON: Final[Tuple[int, int]] = (3, 8)  # min python version is 3.8
 
-URL_HEAD: final = ("https://docs.google.com/spreadsheets/d/e/"
-                   + "2PACX-1vQamumX0p-DYQa5Umi3RxX-pHM6RZhAj1qvUP0jTmaqutN9FwzyriRSXlO9rq6kR60pGIuPvCDzZL3s"
-                   + "/pub?output=tsv")
+# Keep the URL as an only line
+# pylint: disable-next=line-too-long
+URL_HEAD: Final = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQamumX0p-DYQa5Umi3RxX-pHM6RZhAj1qvUP0jTmaqutN9FwzyriRSXlO9rq6kR60pGIuPvCDzZL3s/pub?output=tsv"
 
-URL_ICONS_LIST: final = 'https://downloads.scummvm.org/frs/icons/LIST'
+URL_ICONS_LIST: Final = 'https://downloads.scummvm.org/frs/icons/LIST'
 
-ICON_DIR: final = 'icons'
-ENCODING: final = 'utf-8'
+ICON_DIR: Final = 'icons'
+ENCODING: Final = 'utf-8'
 
-ZIP_NAME_PREFIX: final = 'gui-icons-'
-ZIP_NAME_EXTENSION: final = '.dat'
-ZIP_DATE_FORMAT: final = '%Y%m%d'
+ZIP_NAME_PREFIX: Final = 'gui-icons-'
+ZIP_NAME_EXTENSION: Final = '.dat'
+ZIP_DATE_FORMAT: Final = '%Y%m%d'
 
-LIST_NAME: final = 'LIST'
-LIST_DELIM: final = ','
+LIST_NAME: Final = 'LIST'
+LIST_DELIM: Final = ','
 
-DATE_FORMAT: final = '%Y-%m-%d'
+DATE_FORMAT: Final = '%Y-%m-%d'
 
-FIRST_HASH: final = 'b2a20aad85714e0fea510483007e5e96d84225ca'
+FIRST_HASH: Final = 'b2a20aad85714e0fea510483007e5e96d84225ca'
 
 ChangedFileSet = Set[str]
 
 
-def main(last_update: datetime or None, last_hash: str, listfile_entries: List[str]) -> None:
-    """Our main function.
+def work(last_update: Optional[datetime], last_hash: str, listfile_entries: List[str]) -> None:
+    """Our main worker function.
 
     :param last_update: datetime
             An optional last_update datetime. Day + 1 after the last creation of icons.zip
@@ -155,7 +155,7 @@ def generate_xmls() -> List[str]:
     return xml_files
 
 
-def get_changed_icon_file_names(last_update: datetime, last_hash: str) -> ChangedFileSet:
+def get_changed_icon_file_names(last_update: Optional[datetime], last_hash: str) -> ChangedFileSet:
     """Returns all changed ICON file names.
 
     :param last_update: last update as datetime (hash is preferred)
@@ -163,20 +163,20 @@ def get_changed_icon_file_names(last_update: datetime, last_hash: str) -> Change
     :return: a ChangedFileSet with all changed icons.
     """
 
-    if last_hash:
-        print('\nStep 2: fetching changed icons using hash ' + last_hash)
-        last_iconsdat_date = None
-    else:
-        last_iconsdat_date = last_update.strftime(DATE_FORMAT)
-        print('\nStep 2: fetching changed icons since ' + last_iconsdat_date)
-
     check_isscummvmicons_repo()
 
     is_repo_uptodate()
 
     if last_hash:
+        print('\nStep 2: fetching changed icons using hash ' + last_hash)
+        last_iconsdat_date = None
+
         commit_hash = last_hash
     else:
+        assert last_update is not None
+        last_iconsdat_date = last_update.strftime(DATE_FORMAT)
+        print('\nStep 2: fetching changed icons since ' + last_iconsdat_date)
+
         commit_hashes = get_commit_hashes(last_iconsdat_date)
 
         # no changes nothing to do
@@ -239,7 +239,8 @@ def get_last_hash_from_master() -> str:
 def get_listfile_lasthash() -> Tuple[str, List[str]]:
     """Reads the LIST file and returns the last hash and the list of lines.
 
-    :return: A String with the last hash (from the LIST file) and a List containing all the lines of the LIST file.
+    :return: A String with the last hash (from the LIST file) and
+             a List containing all the lines of the LIST file.
     """
     print('no inputDate argument - fetching last hash from ' + LIST_NAME + '... ', flush=True)
 
@@ -266,15 +267,10 @@ def check_isscummvmicons_repo() -> None:
     """Different checks for the local repo - will quit() the script if there is any error."""
     print('checking local directory is scummvm-icons repo ... ', end='', flush=True)
 
-    output_show_origin = run_git('remote', 'show', 'origin')
-
-    if not is_any_git_repo(output_show_origin):
-        print('error')
-        print('not a git repository (or any of the parent directories)')
-        sys.exit(1)
+    remotes = run_git('remote', '-v')
 
     # wrong repo
-    if not is_scummvmicons_repo(output_show_origin):
+    if not is_scummvmicons_repo(remotes):
         print('error')
         print('local folder is not a scummvm-icons git repo')
         sys.exit(1)
@@ -282,29 +278,21 @@ def check_isscummvmicons_repo() -> None:
     print('done')
 
 
-def is_scummvmicons_repo(output_showorigin: List[AnyStr]) -> bool:
+def is_scummvmicons_repo(remotes: List[bytes]) -> bool:
     """ Checks if the local repo is a scummvm-icons repo"""
 
     # should be the correct repo
-    if any('Fetch URL: https://github.com/scummvm/scummvm-icons' in line.decode(ENCODING)
-           for line in output_showorigin):
-        return True
+    for spec in remotes:
+        _remote, url_type = spec.split(b'\t', maxsplit=1)
+        url, _type = url_type.rsplit(b' ', maxsplit=1)
+        url_ = url.decode(ENCODING)
+        if url_.startswith('https://github.com/scummvm/scummvm-icons'):
+            return True
+        # Also accept ssh:// form
+        if 'git@github.com:scummvm/scummvm-icons' in url_:
+            return True
 
     return False
-
-
-def is_any_git_repo(output_showorigin: List[AnyStr]) -> bool:
-    """Checks if the local folder belongs to a git repo.
-
-    :param output_showorigin: The output of 'show origin'.
-    :return: True if it is a git repo
-    """
-
-    # outside of any local git repo
-    if any('fatal: not a git repository' in line.decode(ENCODING) for line in output_showorigin):
-        return False
-
-    return True
 
 
 def is_repo_uptodate() -> bool:
@@ -322,10 +310,9 @@ def is_repo_uptodate() -> bool:
         return False
 
     # second variant of check
-    run_git('update-index', '--refresh', '--unmerged')
-    if len(run_git('diff-index', '--quiet', 'HEAD')) > 0:
+    if len(run_git('diff-index', 'HEAD')) > 0:
         print('warning')
-        print('fetch with changes - make sure that your local branch is up to date')
+        print('local pending changes - make sure that your local branch is up to date')
         return False
 
     print('done')
@@ -341,7 +328,8 @@ def get_commit_hashes(last_icondat_date: str) -> List[str]:
 
     commit_hashes: List[str] = []
     # using log with reverse to fetch the commit_hashes
-    for commit_lines in run_git('log', '--reverse', '--oneline', "--since='" + last_icondat_date + "'"):
+    for commit_lines in run_git('log', '--reverse', '--oneline',
+                                f"--since='{last_icondat_date}'"):
         # split without sep - runs of consecutive whitespace are regarded as a single separator
         commit_hashes.append(commit_lines.decode(ENCODING).split(maxsplit=1)[0])
 
@@ -363,7 +351,8 @@ def collect_commit_file_names(commit_hash: str) -> ChangedFileSet:
         # stdout will contain bytes - convert to utf-8 and strip cr/lf if present
         git_file_name = file.decode(ENCODING).rstrip()
 
-        if git_file_name.startswith(ICON_DIR + '/') or git_file_name.startswith(ICON_DIR + 'icons\\'):
+        if (git_file_name.startswith(ICON_DIR + '/') or
+            git_file_name.startswith(ICON_DIR + '\\')):
 
             # build local path with a defined local folder / sanitize filenames
             local_path = '.' + os.path.sep + ICON_DIR + os.path.sep + Path(git_file_name).name
@@ -406,40 +395,56 @@ def write_iconsdat(changed_files: List[str]) -> str:
     return zip_name
 
 
-def run_git(*git_args) -> List[AnyStr]:
-    """Executes a git command and returns the stdout (as Line[AnyStr])
+def run_git(*git_args) -> List[bytes]:
+    """Executes a git command and returns the stdout (as Line[bytes])
 
     :param *git_args:  A string, or a sequence of program arguments.
-    :return: The StdOut as List[AnyStr]
+    :return: The StdOut as List[bytes]
     """
 
     my_env = os.environ.copy()  # copy current environ
     my_env["LANG"] = "C"  # add lang C
-    with subprocess.Popen(args=['git'] + list(git_args), stdout=subprocess.PIPE, env=my_env) as child_proc:
-        return child_proc.stdout.readlines()
+    with subprocess.Popen(args=['git'] + list(git_args),
+                          stdout=subprocess.PIPE, env=my_env) as child_proc:
+        assert child_proc.stdout is not None
+        lines = child_proc.stdout.readlines()
+        child_proc.wait()
+        if child_proc.returncode != 0:
+            print(f"ERROR: git command {git_args!r} failed")
+            sys.exit(1)
+        return lines
 
 
 ###########
 
-if sys.version_info < MIN_PYTHON:
-    sys.exit(f"Python {MIN_PYTHON[0]}.{MIN_PYTHON[1]} or later is required.\n")
+def main():
+    """Our main function.
 
-# check args / get date
-argParser = argparse.ArgumentParser(usage='%(prog)s [lastUpdate]')
-argParser.add_argument('lastUpdate', help='last update - date format: yyyymmdd', default=argparse.SUPPRESS, nargs='?')
-args = argParser.parse_args()
+    Called when calling the script directly.
+    """
+    if sys.version_info < MIN_PYTHON:
+        sys.exit(f"Python {MIN_PYTHON[0]}.{MIN_PYTHON[1]} or later is required.\n")
 
-# optional param, if not present fetch last_update from the LIST file
-if 'lastUpdate' in args:
-    arg_last_update = datetime.strptime(args.lastUpdate, '%Y%m%d')
-    print('using provided inputDate: ' + arg_last_update.strftime(DATE_FORMAT) + '\n')
+    # check args / get date
+    arg_parser = argparse.ArgumentParser(usage='%(prog)s [lastUpdate]')
+    arg_parser.add_argument('lastUpdate', help='last update - date format: yyyymmdd',
+                           default=argparse.SUPPRESS, nargs='?')
+    args = arg_parser.parse_args()
 
-    # we have to read the LIST later (if needed)
-    main(arg_last_update, "", [])
+    # optional param, if not present fetch last_update from the LIST file
+    if 'lastUpdate' in args:
+        arg_last_update = datetime.strptime(args.lastUpdate, '%Y%m%d')
+        print('using provided inputDate: ' + arg_last_update.strftime(DATE_FORMAT) + '\n')
 
-else:
-    arg_last_hash, arg_listfile_entries = get_listfile_lasthash()
-    print('using last hash from ' + LIST_NAME + ': ' + arg_last_hash + '\n')
+        # we have to read the LIST later (if needed)
+        work(arg_last_update, "", [])
 
-    # listfile_entries as param, no need the read the LIST file twice
-    main(None, arg_last_hash, arg_listfile_entries)
+    else:
+        arg_last_hash, arg_listfile_entries = get_listfile_lasthash()
+        print('using last hash from ' + LIST_NAME + ': ' + arg_last_hash + '\n')
+
+        # listfile_entries as param, no need the read the LIST file twice
+        work(None, arg_last_hash, arg_listfile_entries)
+
+if __name__ == '__main__':
+    main()
