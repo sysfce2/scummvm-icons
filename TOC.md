@@ -570,8 +570,8 @@
 | ✅ | nancy | nancy3              | Nancy Drew: Message in a Haunted Mansion                                     | GandalfTheWhite80 |
 | ✅ | nancy | nancy4              | Nancy Drew: Treasure in the Royal Tower                                      | GandalfTheWhite80 |
 | ✅ | nancy | nancy5              | Nancy Drew: The Final Scene                                                  | GandalfTheWhite80 |
-| ⬜️ | nancy | nancy6              | Nancy Drew: Secret of the Scarlet Hand                                       | |
-| ⬜️ | nancy | nancy7              | Nancy Drew: Ghost Dogs of Moon Lake                                          | |
+| ✅ | nancy | nancy6              | Nancy Drew: Secret of the Scarlet Hand                                       | GandalfTheWhite80 |
+| ✅ | nancy | nancy7              | Nancy Drew: Ghost Dogs of Moon Lake                                          | GandalfTheWhite80 |
 | ✅ | nancy | vampirediaries      | The Vampire Diaries                                                          | GandalfTheWhite80 |
 | ✅ | neverhood | neverhood           | The Neverhood Chronicles                                                     | JenniBee, GandalfTheWhite80 |
 | ✅ | ngi | fullpipe            | Full Pipe                                                                    | [App Store page](https://apps.apple.com/app/full-pipe-puzzle-adventure/id900071823), GandalfTheWhite80 |
