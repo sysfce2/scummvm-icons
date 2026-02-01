@@ -527,7 +527,7 @@
 | ✅ | kyra | kyra3               | The Legend of Kyrandia: Malcolm's Revenge                                    | Tucky27, GandalfTheWhite80 |
 | ✅ | kyra | lol                 | Lands of Lore: The Throne of Chaos                                           | dotdc, GandalfTheWhite80 |
 | ✅ | lab | lab                 | Labyrinth of Time                                                            | Tucky27, GandalfTheWhite80 |
-| ⬜️ | lastexpress | lastexpress  | The Last Express                                                            | |
+| ✅ | lastexpress | lastexpress  | The Last Express                                                            | GandalfTheWhite80 |
 | ✅ | lure | lure                | Lure of the Temptress                                                        | GandalfTheWhite80 |
 | ✅ | m4   | burger              | Orion Burger                                                                 | GandalfTheWhite80 |
 | ✅ | m4 | riddle                | Ripley's Believe It or Not!: The Riddle of Master Lu                         | GandalfTheWhite80 |
