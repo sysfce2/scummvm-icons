@@ -313,7 +313,7 @@
 | ✅ | buried | buried              | The Journeyman Project 2: Buried in Time                                     | GandalfTheWhite80 |
 | ✅ | cge | soltys              | Soltys                                                                       | JenniBee, GandalfTheWhite80 |
 | ✅ | cge2 | sfinx               | Sfinx                                                                        | JenniBee, GandalfTheWhite80 |
-| ⬜️ | chamber | chamber           | Chamber of the Sci-Mutant Priestess                                         | |
+| ✅ | chamber | chamber           | Chamber of the Sci-Mutant Priestess                                         | GandalfTheWhite80 |
 | ✅ | chewy | chewy               | Chewy: Esc from F5                                                           | GandalfTheWhite80 |
 | ✅ | cine | fw                  | Future Wars                                                                  | Thanius, GandalfTheWhite80 |
 | ✅ | cine | os                  | Operation Stealth                                                            | JenniBee, GandalfTheWhite80 |
